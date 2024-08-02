@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "c141fb31-bad4-496b-8e4b-8e34b5229ef8",
+		"name": "Chat Message",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34005341",
+		"_collection_link": "https://warped-comet-915880.postman.co/workspace/Team-Workspace~021e59ad-6229-436e-8a1a-b8db03fab185/collection/34005341-c141fb31-bad4-496b-8e4b-8e34b5229ef8?action=share&source=collection_link&creator=34005341"
+	},
+	"item": [
+		{
+			"name": "API Token Auth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"user2\",\n    // \"password\": \"Jr;;pboc000#\"\n    \"password\": \"Gwkkicuz888!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api-token-auth/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api-token-auth",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Post Chat Message",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Token b4aaf3d81c5009b8b327651daa318fdb7fcb03fa",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\": \"eeeeeeeeeeeeeeeeeeeeeee\",\n    \"recipient_id\": 3\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/single-chat-add/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"single-chat-add",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Chat Message",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token b4aaf3d81c5009b8b327651daa318fdb7fcb03fa",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/messages/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"messages",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

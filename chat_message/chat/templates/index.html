@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Messages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .message {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .message p {
+            margin: 0;
+            color: #555;
+        }
+        .message small {
+            color: #999;
+        }
+        .message:last-child {
+            border-bottom: none;
+        }
+        .delete-btn {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        function deleteMessage(messageId) {
+            fetch(`/api/messages/${messageId}/delete/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token if needed
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete message.');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat Messages</h1>
+        <br><hr>
+        <div id="messages">
+            {% for message in messages %}
+                <div class="message">
+                    <div>
+                        <p>{{ message.message }}</p>
+                        <small>{{ message.timestamp }}</small>
+                    </div>
+                    <div class="delete-btn" onclick="deleteMessage({{ message.id }})">X</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Messages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .message {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .message p {
+            margin: 0;
+            color: #555;
+        }
+        .message small {
+            color: #999;
+        }
+        .message:last-child {
+            border-bottom: none;
+        }
+        .delete-btn {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function fetchMessages() {
+            fetch('/api/messages/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Token ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML = '';
+                data.forEach(message => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message');
+                    messageDiv.innerHTML = `
+                        <div>
+                            <p><strong>${message.sender.username}</strong> to <strong>${message.recipient.username}</strong>: ${message.message}</p>
+                            <small>${message.timestamp}</small>
+                        </div>
+                        <div class="delete-btn" onclick="deleteMessage(${message.id})">X</div>
+                    `;
+                    messagesDiv.appendChild(messageDiv);
+                });
+            });
+        }
+
+        function deleteMessage(messageId) {
+            fetch(`/api/messages/${messageId}/delete/`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Token ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    fetchMessages();
+                } else {
+                    alert('Failed to delete message.');
+                }
+            });
+        }
+
+        function sendMessage(event) {
+            event.preventDefault();
+            const messageInput = document.getElementById('message');
+            const recipientInput = document.getElementById('recipient');
+            const data = {
+                message: messageInput.value,
+                recipient_id: parseInt(recipientInput.value)
+            };
+            fetch('/api/single-chat-add/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Token ' + localStorage.getItem('token'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (response.ok) {
+                    messageInput.value = '';
+                    fetchMessages();
+                } else {
+                    response.json().then(err => {
+                        alert('Failed to send message: ' + JSON.stringify(err));
+                    });
+                }
+            });
+        }
+
+        window.onload = function() {
+            if (!localStorage.getItem('token')) {
+                const token = prompt('Please enter your token:');
+                localStorage.setItem('token', token);
+            }
+            fetchMessages();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat Messages</h1>
+        <div id="messages"></div>
+        <form onsubmit="sendMessage(event)">
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <input type="text" id="message" name="message" required>
+            </div>
+            <div class="form-group">
+                <label for="recipient">Recipient (User ID):</label>
+                <input type="number" id="recipient" name="recipient" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Send Message</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
